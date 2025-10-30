@@ -7,16 +7,26 @@ public class Countdown : MonoBehaviour
 
     private Counter _counter;
 
-    private InputHandler _inputHandler;
-    private CounterView _counterView;
+    private InputHandler _inputHandler;    
 
     private bool _isRun = true;
 
-    public void Awake()
+    private void Awake()
     {
         _counter = new Counter();
         _inputHandler = GetComponent<InputHandler>();
-        _counterView = GetComponent<CounterView>();
+        CounterView counterView = GetComponent<CounterView>();
+        counterView.Initialize(_counter); 
+    }
+
+    private void OnEnable()
+    {
+        _inputHandler.OnClick += ChangeStateCounter;        
+    }
+
+    private void OnDisable()
+    {        
+        _inputHandler.OnClick -= ChangeStateCounter;
     }
 
     public void ChangeStateCounter()
@@ -42,17 +52,5 @@ public class Countdown : MonoBehaviour
             _counter.RaiseValue();            
             yield return wait;
         }
-    }
-
-    private void OnEnable()
-    {
-        _inputHandler.OnClick += ChangeStateCounter;
-        _counter.OnUpdate += _counterView.UpdateText; 
-    }
-
-    private void OnDisable()
-    {
-        _counter.OnUpdate -= _counterView.UpdateText;
-        _inputHandler.OnClick -= ChangeStateCounter;
-    }
+    }    
 }
